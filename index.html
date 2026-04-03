@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Hospital - Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="hospital-logo">
+                    <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="white" stroke="#667eea" stroke-width="3"/>
+                        <rect x="35" y="20" width="30" height="60" rx="3" fill="#667eea"/>
+                        <rect x="20" y="35" width="60" height="30" rx="3" fill="#667eea"/>
+                        <circle cx="50" cy="50" r="8" fill="white"/>
+                    </svg>
+                </div>
+                <div class="hospital-info">
+                    <h1>MediCare Hospital</h1>
+                    <p>Your Health, Our Priority</p>
+                </div>
+            </div>
+            
+            <nav class="header-nav">
+                <button class="emergency-btn" onclick="callAmbulance()">
+                    🚑 Emergency
+                </button>
+                <div class="user-menu">
+                    <span id="user-name">Guest</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="main-nav">
+            <button class="nav-btn active" onclick="showSection('patients')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Patients
+            </button>
+            <button class="nav-btn" onclick="showSection('doctors')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Doctors
+            </button>
+            <button class="nav-btn" onclick="showSection('appointments')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Appointments
+            </button>
+            <button class="nav-btn" onclick="showSection('prescriptions')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Prescriptions
+            </button>
+            <button class="nav-btn" onclick="showSection('ambulance')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 17h6M9 17a2 2 0 1 1-4 0M9 17a2 2 0 1 0-4 0M19 17a2 2 0 1 1-4 0M19 17a2 2 0 1 0-4 0M3 7h11v10H3z"></path>
+                    <path d="M14 7h3l3 3v4h-6V7z"></path>
+                </svg>
+                Ambulance
+            </button>
+        </nav>
+
+        <!-- Patients Section -->
+        <section id="patients-section" class="section active">
+            <div class="section-header">
+                <h2>Patient Management</h2>
+                <button class="btn btn-primary" onclick="showAddPatientForm()">+ Add Patient</button>
+            </div>
+
+            <!-- Add Patient Form -->
+            <div id="add-patient-form" class="form-container" style="display: none;">
+                <h3>Add New Patient</h3>
+                <form onsubmit="addPatient(event)">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" id="patient-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Age:</label>
+                        <input type="number" id="patient-age" required min="0" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender:</label>
+                        <select id="patient-gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact:</label>
+                        <input type="tel" id="patient-contact" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address:</label>
+                        <textarea id="patient-address" required></textarea>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="patient-emergency">
+                            Emergency Patient
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Save Patient</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideAddPatientForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Patients -->
+            <div class="search-container">
+                <input type="text" id="search-patient" placeholder="Search patients by name..." onkeyup="searchPatients()">
+            </div>
+
+            <!-- Patients List -->
+            <div id="patients-list" class="data-list">
+                <p class="loading">Loading patients...</p>
+            </div>
+        </section>
+
+        <!-- Doctors Section -->
+        <section id="doctors-section" class="section">
+            <div class="section-header">
+                <h2>Doctor Management</h2>
+                <button class="btn btn-primary" onclick="showAddDoctorForm()">+ Add Doctor</button>
+            </div>
+
+            <!-- Add Doctor Form -->
+            <div id="add-doctor-form" class="form-container" style="display: none;">
+                <h3>Add New Doctor</h3>
+                <form onsubmit="addDoctor(event)">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" id="doctor-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Specialization:</label>
+                        <input type="text" id="doctor-specialization" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact:</label>
+                        <input type="tel" id="doctor-contact" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Save Doctor</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideAddDoctorForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Doctors List -->
+            <div id="doctors-list" class="data-list">
+                <p class="loading">Loading doctors...</p>
+            </div>
+        </section>
+
+        <!-- Appointments Section -->
+        <section id="appointments-section" class="section">
+            <div class="section-header">
+                <h2>Appointment Management</h2>
+                <button class="btn btn-primary" onclick="showBookAppointmentForm()">+ Book Appointment</button>
+            </div>
+
+            <!-- Book Appointment Form -->
+            <div id="book-appointment-form" class="form-container" style="display: none;">
+                <h3>Book New Appointment</h3>
+                <form onsubmit="bookAppointment(event)">
+                    <div class="form-group">
+                        <label>Select Patient:</label>
+                        <select id="appointment-patient" required>
+                            <option value="">Select Patient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Doctor:</label>
+                        <select id="appointment-doctor" required>
+                            <option value="">Select Doctor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Appointment Date & Time:</label>
+                        <input type="datetime-local" id="appointment-date" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Book Appointment</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideBookAppointmentForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Appointments List -->
+            <div id="appointments-list" class="data-list">
+                <p class="loading">Loading appointments...</p>
+            </div>
+        </section>
+
+        <!-- Prescriptions Section -->
+        <section id="prescriptions-section" class="section">
+            <div class="section-header">
+                <h2>Prescription Management</h2>
+                <button class="btn btn-primary" onclick="showAddPrescriptionForm()">+ Add Prescription</button>
+            </div>
+
+            <!-- Add Prescription Form -->
+            <div id="add-prescription-form" class="form-container" style="display: none;">
+                <h3>Add New Prescription</h3>
+                <form onsubmit="addPrescription(event)">
+                    <div class="form-group">
+                        <label>Select Patient:</label>
+                        <select id="prescription-patient" required onchange="loadPatientAppointments()">
+                            <option value="">Select Patient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Appointment:</label>
+                        <select id="prescription-appointment" required>
+                            <option value="">Select Appointment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Doctor:</label>
+                        <select id="prescription-doctor" required>
+                            <option value="">Select Doctor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Diagnosis:</label>
+                        <textarea id="prescription-diagnosis" required placeholder="Enter diagnosis..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Medicines:</label>
+                        <textarea id="prescription-medicines" required placeholder="Enter medicines (one per line)..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Notes:</label>
+                        <textarea id="prescription-notes" placeholder="Enter any additional notes..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Save Prescription</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideAddPrescriptionForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- View Prescriptions -->
+            <div class="search-container">
+                <select id="view-prescription-patient" onchange="viewPrescriptions()">
+                    <option value="">Select Patient to View Prescriptions</option>
+                </select>
+            </div>
+
+            <!-- Prescriptions List -->
+            <div id="prescriptions-list" class="data-list">
+                <p class="info">Select a patient to view their prescriptions</p>
+            </div>
+        </section>
+
+        <!-- Ambulance Section -->
+        <section id="ambulance-section" class="section">
+            <div class="section-header">
+                <h2>🚑 Ambulance Services</h2>
+                <button class="btn btn-danger" onclick="requestEmergencyAmbulance()">Request Emergency Ambulance</button>
+            </div>
+
+            <div class="ambulance-info-card">
+                <h3>24/7 Emergency Ambulance Service</h3>
+                <p>Our ambulance service is available round the clock for emergency medical transportation.</p>
+                
+                <div class="emergency-contacts">
+                    <div class="contact-card">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <h4>Emergency Hotline</h4>
+                        <p class="hotline-number">911</p>
+                        <p>Available 24/7</p>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <h4>Hospital Direct</h4>
+                        <p class="hotline-number">+1-555-MEDICARE</p>
+                        <p>For non-emergency transport</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request Ambulance Form -->
+            <div id="ambulance-request-form" class="form-container" style="display: none;">
+                <h3>Request Ambulance</h3>
+                <form onsubmit="submitAmbulanceRequest(event)">
+                    <div class="form-group">
+                        <label>Patient Name:</label>
+                        <input type="text" id="ambulance-patient-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number:</label>
+                        <input type="tel" id="ambulance-contact" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pickup Location:</label>
+                        <textarea id="ambulance-location" required placeholder="Enter complete address..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Type:</label>
+                        <select id="ambulance-emergency-type" required>
+                            <option value="">Select Emergency Type</option>
+                            <option value="cardiac">Cardiac Emergency</option>
+                            <option value="accident">Accident</option>
+                            <option value="stroke">Stroke</option>
+                            <option value="breathing">Breathing Difficulty</option>
+                            <option value="trauma">Trauma</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Details:</label>
+                        <textarea id="ambulance-details" placeholder="Describe the situation..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-danger">Request Ambulance Now</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideAmbulanceForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Active Ambulance Requests -->
+            <div class="ambulance-requests">
+                <h3>Active Ambulance Requests</h3>
+                <div id="ambulance-requests-list" class="data-list">
+                    <p class="info">No active ambulance requests</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="white" stroke="#667eea" stroke-width="3"/>
+                        <rect x="35" y="20" width="30" height="60" rx="3" fill="#667eea"/>
+                        <rect x="20" y="35" width="60" height="30" rx="3" fill="#667eea"/>
+                        <circle cx="50" cy="50" r="8" fill="white"/>
+                    </svg>
+                    <div>
+                        <h3>MediCare Hospital</h3>
+                        <p>Your Health, Our Priority</p>
+                    </div>
+                </div>
+                <p class="footer-description">
+                    Providing quality healthcare services with state-of-the-art facilities and experienced medical professionals.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#patients">Patients</a></li>
+                    <li><a href="#doctors">Doctors</a></li>
+                    <li><a href="#appointments">Appointments</a></li>
+                    <li><a href="#ambulance">Emergency Services</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <ul class="contact-info">
+                    <li>📍 123 Medical Center Drive, Healthcare City</li>
+                    <li>📞 +1-555-MEDICARE (634-4227)</li>
+                    <li>📧 info@medicarehospital.com</li>
+                    <li>🚑 Emergency: 911</li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Opening Hours</h4>
+                <ul class="hours-info">
+                    <li><strong>Emergency:</strong> 24/7</li>
+                    <li><strong>OPD:</strong> Mon-Sat, 8AM-8PM</li>
+                    <li><strong>Lab:</strong> Mon-Sun, 7AM-9PM</li>
+                    <li><strong>Pharmacy:</strong> 24/7</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 MediCare Hospital. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Sitemap</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

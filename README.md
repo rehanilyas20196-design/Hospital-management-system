@@ -1,4 +1,4 @@
- 🏥 MediCare Hospital Management System
+# 🏥 MediCare Hospital Management System
 
 A comprehensive, full-featured hospital management system with C++ backend, PostgreSQL database support, and modern responsive HTML/CSS/JavaScript frontend with authentication.
 
@@ -383,5 +383,3 @@ For issues or questions, please check the code comments or create an issue in th
 ---
 
 **Made with ❤️ for better healthcare management**
-
-

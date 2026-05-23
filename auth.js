@@ -1,5 +1,7 @@
 // Authentication JavaScript
 
+const API_URL = 'http://localhost:3000/api';
+
 function showMessage(message, type) {
     const existingMessage = document.querySelector('.message');
     if (existingMessage) {
@@ -25,48 +27,56 @@ function showMessage(message, type) {
     }, 5000);
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const remember = document.getElementById('remember').checked;
 
-    // Get stored users
-    const users = JSON.parse(localStorage.getItem('hospital_users') || '[]');
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
 
-    // Find user
-    const user = users.find(u => 
-        (u.email === username || u.username === username) && u.password === password
-    );
+        const data = await response.json();
 
-    if (user) {
-        // Store session
-        const session = {
-            userId: user.id,
-            username: user.username || user.email,
-            userType: user.userType,
-            name: `${user.firstname} ${user.lastname}`,
-            loginTime: new Date().toISOString()
-        };
+        if (response.ok) {
+            // Store session securely with JWT
+            const session = {
+                userId: data.user.id,
+                username: data.user.email,
+                userType: data.user.userType,
+                name: data.user.name,
+                token: data.token, // JWT for authorization
+                loginTime: new Date().toISOString()
+            };
 
-        if (remember) {
-            localStorage.setItem('hospital_session', JSON.stringify(session));
+            if (remember) {
+                localStorage.setItem('hospital_session', JSON.stringify(session));
+            } else {
+                sessionStorage.setItem('hospital_session', JSON.stringify(session));
+            }
+
+            showMessage('Login successful! Redirecting...', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
         } else {
-            sessionStorage.setItem('hospital_session', JSON.stringify(session));
+            showMessage(data.message || 'Invalid username or password!', 'error');
         }
-
-        showMessage('Login successful! Redirecting...', 'success');
-
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
-    } else {
-        showMessage('Invalid username or password!', 'error');
+    } catch (error) {
+        showMessage('Connection error. Is the server running?', 'error');
+        console.error('Login error:', error);
     }
 }
 
-function handleSignup(event) {
+async function handleSignup(event) {
     event.preventDefault();
 
     const firstname = document.getElementById('firstname').value;
@@ -94,35 +104,36 @@ function handleSignup(event) {
         return;
     }
 
-    // Get existing users
-    const users = JSON.parse(localStorage.getItem('hospital_users') || '[]');
+    try {
+        const response = await fetch(`${API_URL}/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstname,
+                lastname,
+                email,
+                phone,
+                password,
+                userType
+            })
+        });
 
-    // Check if email already exists
-    if (users.some(u => u.email === email)) {
-        showMessage('Email already registered!', 'error');
-        return;
+        const data = await response.json();
+
+        if (response.ok) {
+            showMessage('Account created successfully! Redirecting to login...', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } else {
+            showMessage(data.message || 'Error creating account!', 'error');
+        }
+    } catch (error) {
+        showMessage('Connection error. Is the server running?', 'error');
+        console.error('Signup error:', error);
     }
-
-    // Create new user
-    const newUser = {
-        id: Date.now(),
-        firstname,
-        lastname,
-        email,
-        phone,
-        password, // In production, this should be hashed
-        userType,
-        createdAt: new Date().toISOString()
-    };
-
-    users.push(newUser);
-    localStorage.setItem('hospital_users', JSON.stringify(users));
-
-    showMessage('Account created successfully! Redirecting to login...', 'success');
-
-    setTimeout(() => {
-        window.location.href = 'login.html';
-    }, 2000);
 }
 
 // Check if user is already logged in
